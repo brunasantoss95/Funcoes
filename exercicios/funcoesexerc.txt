@@ -1,0 +1,89 @@
+--EXERCÍCIOS
+
+-- 1) Faça uma funçao que retorne o nome da montadora passando como parâmetro o código da montadora
+
+create or replace function fnc_01 (p_codigo in number)
+return varchar2
+is
+v_nome_montadora varchar2(100); 
+begin
+select nome_montadora into v_nome_montadora from montadora 
+where cod_montadora = p_codigo;
+return (v_nome_montadora);
+	exception
+		when others then
+			raise_application_error(-20200, 'Erro inesperado');
+end;
+
+select fnc_01(5) from dual; 
+
+
+-- 2) Faça uma funçao que retorne o nome do carro passando como parâmetro o código do carro
+
+create or replace function fnc_02 (p_codigo in number)
+return varchar2
+is
+v_nome_carro varchar2(100); 
+begin
+select nome_carro into v_nome_carro from carro 
+where cod_carro = p_codigo;
+return (v_nome_carro);
+	exception
+		when others then
+			raise_application_error(-20200, 'Erro inesperado');
+end;
+
+select fnc_02(3) from dual; 
+
+-- 3) Faça uma função que retorne quantos tipos de carros estão cadastrados por montadora, passando como parâmetro o código da montadora.
+
+create or replace function fnc_03 (p_codigo in number)
+return varchar2
+is
+    cursor c_fnc_03 is
+    select count(1) contador
+    from carro
+    where carro.cod_montadora = p_codigo;
+	r_fnc_03 c_fnc_03%rowtype;
+begin
+    open c_fnc_03;
+	fetch c_fnc_03 into r_fnc_03;
+	close c_fnc_03;
+return (r_fnc_03.contador);
+
+	exception
+		when others then
+			raise_application_error(-20200, 'Erro inesperado');
+end;
+
+select fnc_03(2) from dual; 
+    
+
+-- 4) Faça uma função que retorne o nome do carro e o nome da montadora passando como parâmetro o código do carro.
+
+create or replace function fnc_04 (p_codigo in number)
+return varchar2
+is
+
+    cursor c_fnc_04 is
+    select nome_carro, nome_montadora
+    from carro, montadora
+    where montadora.cod_montadora = carro.cod_montadora
+    and carro.cod_carro = p_codigo;
+	r_fnc_04 c_fnc_04%rowtype;
+begin
+    open c_fnc_04; 
+	fetch c_fnc_04 into r_fnc_04;
+	close c_fnc_04;
+
+return (r_fnc_04.nome_carro || r_fnc_04.nome_montadora);
+
+	exception
+		when others then
+			raise_application_error(-20200, 'Erro inesperado');
+end;
+
+select fnc_03(2) from dual; 
+
+
+
